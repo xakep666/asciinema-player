@@ -50,10 +50,12 @@ func NewPty() (*Pty, error) {
 	return &Pty{Stdin: os.Stdin, Stdout: os.Stdout}, nil
 }
 
+// Size returns terminal size
 func (p *Pty) Size() (int, int, error) {
 	return pty.Getsize(p.Stdout)
 }
 
+// Write puts data to terminal
 func (p *Pty) Write(data []byte) error {
 	_, err := p.Stdout.Write(data)
 	if err != nil {
@@ -65,6 +67,7 @@ func (p *Pty) Write(data []byte) error {
 	return nil
 }
 
+// ToRaw saves terminal state and tries to put it to raw mode.
 func (p *Pty) ToRaw() error {
 	fd := p.Stdin.Fd()
 	var err error
@@ -77,6 +80,7 @@ func (p *Pty) ToRaw() error {
 	return nil
 }
 
+// Reset restores terminal to saved state.
 func (p *Pty) Reset() error {
 	if p.prevState == nil {
 		return nil
@@ -84,6 +88,8 @@ func (p *Pty) Reset() error {
 	return raw.TcSetAttr(p.Stdin.Fd(), p.prevState)
 }
 
+// TimeoutEvent polls terminal event but not greater than provided timeout.
+// If timeout exceeded ErrEventTimeout will be returned.
 func (p *Pty) TimeoutEvent(timeout time.Duration) (termbox.Event, error) {
 	ev := make(chan termbox.Event)
 
