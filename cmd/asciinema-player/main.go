@@ -47,6 +47,6 @@ func main() {
 	tp, err := asciicast.NewTerminalPlayer()
 	errExit(err)
 
-	err = tp.Play(parsed, maxWait.Seconds(), speed)
+	err = tp.Play(parsed, maxWait, speed)
 	errExit(err)
 }

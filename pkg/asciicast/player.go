@@ -33,14 +33,14 @@ func NewTerminalPlayer() (TerminalPlayer, error) {
 // Player can be interrupted by hitting Ctrl-C.
 // Player can be paused and unpaused by hitting space key.
 // If player paused you can switch to next frame by pressing tab key.
-func (p *TerminalPlayer) Play(asciicast *Asciicast, maxWait, speed float64) error {
+func (p *TerminalPlayer) Play(asciicast *Asciicast, maxWait time.Duration, speed float64) error {
 	p.Terminal.ToRaw()
 	defer p.Terminal.Reset()
 
 	stdout := asciicast.Frames.
 		Filter(IsOutputFrame).
 		ToRelativeTime().
-		CapRelativeTime(math.Min(asciicast.Header.IdleTimeLimit, maxWait)).
+		CapRelativeTime(math.Min(asciicast.Header.IdleTimeLimit, maxWait.Seconds())).
 		ToAbsoluteTime().
 		AdjustSpeed(speed)
 
