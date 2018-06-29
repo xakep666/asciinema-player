@@ -3,8 +3,11 @@ package asciicast
 import (
 	"encoding/json"
 	"fmt"
+	"time"
 )
 
+// FrameType is a type of frame.
+// Currently it is only input ("i") frames and output ("o") frames.
 type FrameType string
 
 const (
@@ -12,15 +15,20 @@ const (
 	OutputFrame FrameType = "o"
 )
 
+// Frame represents asciicast v2 frame.
+// This is JSON-array with fixed size of 3 elements:
+// [0]:	frame delay in seconds (float64),
+// [1]:	frame type,
+// [2]: frame data (escaped string).
 type Frame struct {
 	Time float64
 	Type FrameType
 	Data []byte
 }
 
-// jsonFrame consists from relative timestamp (float64), type ("i" or "o") and terminal text
 type jsonFrame [3]interface{}
 
+// UnmarshalJSON implements json.Unmarshaler
 func (f *Frame) UnmarshalJSON(b []byte) error {
 	var rawFrame jsonFrame
 	if err := json.Unmarshal(b, &rawFrame); err != nil {
@@ -54,4 +62,9 @@ func (f *Frame) UnmarshalJSON(b []byte) error {
 	}
 
 	return nil
+}
+
+// Duration returns frame duration converted to time.Duration
+func (f *Frame) Duration() time.Duration {
+	return time.Duration(float64(time.Second) * f.Time)
 }

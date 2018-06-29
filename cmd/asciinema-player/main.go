@@ -37,7 +37,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	file, err := os.Open(os.Args[1])
+	file, err := os.Open(filePath)
 	errExit(err)
 	defer file.Close()
 

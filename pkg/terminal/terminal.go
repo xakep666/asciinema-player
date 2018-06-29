@@ -12,24 +12,37 @@ import (
 	"golang.org/x/crypto/ssh/terminal"
 )
 
+// Terminal is an interface for terminal.
 type Terminal interface {
-	Size() (int, int, error)
+	// Size returns terminal width and height.
+	Size() (width, height int, err error)
+
+	// Write puts provided bytes to terminal.
 	Write([]byte) error
+
+	// ToRaw puts terminal to "raw" state. Previous state should be saved.
 	ToRaw() error
+
+	// Reset resets terminal to saved state.
 	Reset() error
+
+	// TimeoutEvent waits for terminal event. It blocks until event caught or timeout exceeded.
 	TimeoutEvent(timeout time.Duration) (termbox.Event, error)
 
 	io.Closer
 }
 
+// ErrEventTimeout is error returned by TimeoutEvent if timeout exceeded.
 var ErrEventTimeout = errors.New("event timeout")
 
+// Pty is a PTY representation.
 type Pty struct {
 	Stdin     *os.File
 	Stdout    *os.File
 	prevState *raw.Termios
 }
 
+// NewPty attaches to current terminal and performs some initializations.
 func NewPty() (*Pty, error) {
 	if err := termbox.Init(); err != nil {
 		return nil, err
@@ -47,11 +60,8 @@ func (p *Pty) Write(data []byte) error {
 		return err
 	}
 
-	err = p.Stdout.Sync()
-	if err != nil {
-		return err
-	}
-
+	// sync on stdout returns "sync error" which we can`t properly handle
+	p.Stdout.Sync()
 	return nil
 }
 
@@ -92,6 +102,7 @@ func (p *Pty) TimeoutEvent(timeout time.Duration) (termbox.Event, error) {
 
 }
 
+// Close resets terminal and performs de-initializations.
 func (p *Pty) Close() error {
 	p.Reset()
 	termbox.Close()

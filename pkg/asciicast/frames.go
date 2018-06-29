@@ -4,8 +4,10 @@ import (
 	"math"
 )
 
+// Frames is a list of frame with additional functions.
 type Frames []Frame
 
+// Filter returns frame list with frames which satisfies given predicate.
 func (f Frames) Filter(p func(frame *Frame) bool) Frames {
 	var ret Frames
 
@@ -18,6 +20,7 @@ func (f Frames) Filter(p func(frame *Frame) bool) Frames {
 	return ret
 }
 
+// ToRelativeTime converts frame time to relative values.
 func (f Frames) ToRelativeTime() Frames {
 	var ret Frames
 
@@ -35,6 +38,7 @@ func (f Frames) ToRelativeTime() Frames {
 	return ret
 }
 
+// ToAbsoluteTime converts frame time to absolute values.
 func (f Frames) ToAbsoluteTime() Frames {
 	var ret Frames
 
@@ -52,6 +56,7 @@ func (f Frames) ToAbsoluteTime() Frames {
 	return ret
 }
 
+// CapRelativeTime sets minimal delay for frames. Frame time must be relative.
 func (f Frames) CapRelativeTime(timeLimit float64) Frames {
 	var ret Frames
 
@@ -70,6 +75,10 @@ func (f Frames) CapRelativeTime(timeLimit float64) Frames {
 	return ret
 }
 
+// AdjustSpeed allows to change time delay between.
+// Speed value must be positive.
+// If speed > 1 delay will be increased.
+// If speed < 1 delay will be decreased.
 func (f Frames) AdjustSpeed(speed float64) Frames {
 	var ret Frames
 
@@ -84,6 +93,7 @@ func (f Frames) AdjustSpeed(speed float64) Frames {
 	return ret
 }
 
+// IsOutputFrame determines that given frame is output type.
 func IsOutputFrame(frame *Frame) bool {
 	return frame.Type == OutputFrame
 }

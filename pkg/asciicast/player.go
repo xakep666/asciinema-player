@@ -4,18 +4,21 @@ import (
 	"math"
 	"time"
 
-	termbox "github.com/nsf/termbox-go"
+	"github.com/nsf/termbox-go"
 	"github.com/xakep666/asciinema-player/pkg/terminal"
 )
 
+// Player is an interface for playing asciicasts.
 type Player interface {
 	Play(asciicast *Asciicast, maxWait, speed float64) error
 }
 
+// TerminalPlayer is a asciicast to terminal player.
 type TerminalPlayer struct {
 	Terminal terminal.Terminal
 }
 
+// NewTerminalPlayer initializes terminal and creates terminal asciicasts player.
 func NewTerminalPlayer() (TerminalPlayer, error) {
 	term, err := terminal.NewPty()
 	if err != nil {
@@ -24,6 +27,12 @@ func NewTerminalPlayer() (TerminalPlayer, error) {
 	return TerminalPlayer{Terminal: term}, nil
 }
 
+// Play plays provided asciicast.
+// On *nix systems it firstly puts terminal to raw mode (will be restored after finish).
+// Playing is actually putting frame data to terminal without escaping.
+// Player can be interrupted by hitting Ctrl-C.
+// Player can be paused and unpaused by hitting space key.
+// If player paused you can switch to next frame by pressing tab key.
 func (p *TerminalPlayer) Play(asciicast *Asciicast, maxWait, speed float64) error {
 	p.Terminal.ToRaw()
 	defer p.Terminal.Reset()
@@ -41,7 +50,7 @@ func (p *TerminalPlayer) Play(asciicast *Asciicast, maxWait, speed float64) erro
 	var pauseTime time.Time
 
 	for _, frame := range stdout {
-		delay := frame.Time - time.Now().Sub(baseTime).Seconds()
+		delay := frame.Duration() - time.Now().Sub(baseTime)
 
 	btnLoop:
 		for !ctrlC && delay > 0 {
@@ -65,17 +74,17 @@ func (p *TerminalPlayer) Play(asciicast *Asciicast, maxWait, speed float64) erro
 						break pauseLoop
 					case termbox.KeySpace:
 						paused = false
-						baseTime.Add(time.Now().Sub(pauseTime))
+						baseTime = baseTime.Add(time.Now().Sub(pauseTime))
 						break pauseLoop
-					case 0x2e: // period (dot)
+					case termbox.KeyTab:
 						delay = 0
 						pauseTime = time.Now()
-						baseTime = time.Unix(pauseTime.Unix()-int64(frame.Time*float64(time.Second)), 0)
+						baseTime = pauseTime.Add(-frame.Duration())
 						break pauseLoop
 					}
 				}
 			} else {
-				event, err := p.Terminal.TimeoutEvent(time.Duration(float64(time.Second) * delay))
+				event, err := p.Terminal.TimeoutEvent(delay)
 				switch err {
 				case nil:
 					// pass
@@ -95,7 +104,7 @@ func (p *TerminalPlayer) Play(asciicast *Asciicast, maxWait, speed float64) erro
 				case termbox.KeySpace:
 					paused = true
 					pauseTime = time.Now()
-					slept := frame.Time - pauseTime.Sub(baseTime).Seconds()
+					slept := frame.Duration() - pauseTime.Sub(baseTime)
 					delay -= slept
 				}
 			}
@@ -104,7 +113,9 @@ func (p *TerminalPlayer) Play(asciicast *Asciicast, maxWait, speed float64) erro
 		if ctrlC {
 			break
 		}
-		p.Terminal.Write(frame.Data)
+		if err := p.Terminal.Write(frame.Data); err != nil {
+			return err
+		}
 	}
 
 	return nil

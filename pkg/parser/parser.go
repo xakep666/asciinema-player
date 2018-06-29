@@ -9,6 +9,8 @@ import (
 	"github.com/xakep666/asciinema-player/pkg/asciicast"
 )
 
+// Parse parses asciinema v2 file. It returns error if version is not "2".
+// Parsing is two-stage: first stage is header parsing, second stage is frames parsing.
 func Parse(rd io.Reader) (*asciicast.Asciicast, error) {
 	scanner := bufio.NewScanner(rd)
 	scanner.Split(bufio.ScanLines)
