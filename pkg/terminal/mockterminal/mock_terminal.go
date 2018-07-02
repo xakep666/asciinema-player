@@ -2,6 +2,7 @@ package mockterminal
 
 import (
 	"bytes"
+	"sync"
 	"time"
 
 	"github.com/nsf/termbox-go"
@@ -11,6 +12,7 @@ import (
 // MockTerminal is a mock for Terminal interface with event queue and buffer. Used for testing purposes.
 type MockTerminal struct {
 	eventQueue chan termbox.Event
+	bufLock    sync.Mutex
 	buf        *bytes.Buffer
 	isRaw      bool
 }
@@ -34,6 +36,8 @@ func (m *MockTerminal) Size() (int, int, error) {
 
 // Write puts data to internal buffer.
 func (m *MockTerminal) Write(data []byte) (int, error) {
+	m.bufLock.Lock()
+	defer m.bufLock.Unlock()
 	return m.buf.Write(data)
 }
 
@@ -46,7 +50,9 @@ func (m *MockTerminal) ToRaw() error {
 // Reset sets internal "raw" attribute to false, resets internal data buffer and clears event queue.
 func (m *MockTerminal) Reset() error {
 	m.isRaw = false
+	m.bufLock.Lock()
 	m.buf.Reset() // clear buffer data
+	m.bufLock.Unlock()
 
 	// clear events queue
 L:
@@ -92,5 +98,7 @@ func (m *MockTerminal) PutEvent(event termbox.Event) {
 
 // RecordedData returns bytes recorded on Write() call.
 func (m *MockTerminal) RecordedData() []byte {
-	return m.buf.Bytes()
+	m.bufLock.Lock()
+	defer m.bufLock.Unlock()
+	return append([]byte{}, m.buf.Bytes()[:]...)
 }
