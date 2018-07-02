@@ -95,7 +95,6 @@ func (p *TerminalPlayer) Play(asciicast *Asciicast, maxWait time.Duration, speed
 					delay -= slept
 				}
 			}
-
 		}
 		if ctrlC {
 			break
