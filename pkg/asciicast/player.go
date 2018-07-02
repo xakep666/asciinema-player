@@ -18,15 +18,6 @@ type TerminalPlayer struct {
 	Terminal terminal.Terminal
 }
 
-// NewTerminalPlayer initializes terminal and creates terminal asciicasts player.
-func NewTerminalPlayer() (TerminalPlayer, error) {
-	term, err := terminal.NewPty()
-	if err != nil {
-		return TerminalPlayer{}, err
-	}
-	return TerminalPlayer{Terminal: term}, nil
-}
-
 // Play plays provided asciicast.
 // On *nix systems it firstly puts terminal to raw mode (will be restored after finish).
 // Playing is actually putting frame data to terminal without escaping.

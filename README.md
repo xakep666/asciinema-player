@@ -40,10 +40,12 @@ if err != nil {
     return err
 }
 
-tp, err := asciicast.NewTerminalPlayer()
+term, err := terminal.NewPty()
 if err != nil {
     return err
 }
+
+tp := &asciicast.TerminalPlayer{Terminal: term}
 
 err = tp.Play(parsed, maxWait, speed)
 if err != nil {

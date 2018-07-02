@@ -8,6 +8,7 @@ import (
 
 	"github.com/xakep666/asciinema-player/pkg/asciicast"
 	"github.com/xakep666/asciinema-player/pkg/parser"
+	"github.com/xakep666/asciinema-player/pkg/terminal"
 )
 
 func errExit(err error) {
@@ -44,8 +45,10 @@ func main() {
 	parsed, err := parser.Parse(file)
 	errExit(err)
 
-	tp, err := asciicast.NewTerminalPlayer()
+	term, err := terminal.NewPty()
 	errExit(err)
+
+	tp := &asciicast.TerminalPlayer{Terminal: term}
 
 	err = tp.Play(parsed, maxWait, speed)
 	errExit(err)
