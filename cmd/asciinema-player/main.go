@@ -47,6 +47,8 @@ func main() {
 
 	term, err := terminal.NewPty()
 	errExit(err)
+	errExit(term.ToRaw())
+	defer term.Reset()
 
 	tp := &asciicast.TerminalPlayer{Terminal: term}
 

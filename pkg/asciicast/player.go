@@ -19,15 +19,11 @@ type TerminalPlayer struct {
 }
 
 // Play plays provided asciicast.
-// On *nix systems it firstly puts terminal to raw mode (will be restored after finish).
 // Playing is actually putting frame data to terminal without escaping.
 // Player can be interrupted by hitting Ctrl-C.
 // Player can be paused and unpaused by hitting space key.
 // If player paused you can switch to next frame by pressing tab key.
 func (p *TerminalPlayer) Play(asciicast *Asciicast, maxWait time.Duration, speed float64) error {
-	p.Terminal.ToRaw()
-	defer p.Terminal.Reset()
-
 	stdout := asciicast.Frames.
 		Filter(IsOutputFrame).
 		ToRelativeTime().

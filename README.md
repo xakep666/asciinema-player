@@ -45,6 +45,12 @@ if err != nil {
     return err
 }
 
+if err := term.ToRaw(); err != nil {
+    return err
+}
+
+defer term.Reset()
+
 tp := &asciicast.TerminalPlayer{Terminal: term}
 
 err = tp.Play(parsed, maxWait, speed)
