@@ -2,7 +2,6 @@ language: go
 
 go:
   - 1.10.x
-  - vgo
 
 script:
   - go test -race -coverprofile=coverage.txt -covermode=atomic ./pkg/...
