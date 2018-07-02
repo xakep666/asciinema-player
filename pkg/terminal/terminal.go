@@ -6,8 +6,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/creack/termios/raw"
-	"github.com/kr/pty"
 	"github.com/nsf/termbox-go"
 	"golang.org/x/crypto/ssh/terminal"
 )
@@ -18,7 +16,7 @@ type Terminal interface {
 	Size() (width, height int, err error)
 
 	// Write puts provided bytes to terminal.
-	Write([]byte) error
+	Write([]byte) (int, error)
 
 	// ToRaw puts terminal to "raw" state. Previous state should be saved.
 	ToRaw() error
@@ -39,7 +37,7 @@ var ErrEventTimeout = errors.New("event timeout")
 type Pty struct {
 	Stdin     *os.File
 	Stdout    *os.File
-	prevState *raw.Termios
+	prevState *terminal.State
 }
 
 // NewPty attaches to current terminal and performs some initializations.
@@ -52,19 +50,20 @@ func NewPty() (*Pty, error) {
 
 // Size returns terminal size
 func (p *Pty) Size() (int, int, error) {
-	return pty.Getsize(p.Stdout)
+	w, h := termbox.Size()
+	return w, h, nil
 }
 
 // Write puts data to terminal
-func (p *Pty) Write(data []byte) error {
-	_, err := p.Stdout.Write(data)
+func (p *Pty) Write(data []byte) (int, error) {
+	n, err := p.Stdout.Write(data)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	// sync on stdout returns "sync error" which we can`t properly handle
 	p.Stdout.Sync()
-	return nil
+	return n, nil
 }
 
 // ToRaw saves terminal state and tries to put it to raw mode.
@@ -72,7 +71,7 @@ func (p *Pty) ToRaw() error {
 	fd := p.Stdin.Fd()
 	var err error
 	if terminal.IsTerminal(int(fd)) {
-		p.prevState, err = raw.MakeRaw(fd)
+		p.prevState, err = terminal.MakeRaw(int(fd))
 		if err != nil {
 			return err
 		}
@@ -85,7 +84,7 @@ func (p *Pty) Reset() error {
 	if p.prevState == nil {
 		return nil
 	}
-	return raw.TcSetAttr(p.Stdin.Fd(), p.prevState)
+	return terminal.Restore(int(p.Stdin.Fd()), p.prevState)
 }
 
 // TimeoutEvent polls terminal event but not greater than provided timeout.

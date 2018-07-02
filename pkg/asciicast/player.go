@@ -113,7 +113,7 @@ func (p *TerminalPlayer) Play(asciicast *Asciicast, maxWait time.Duration, speed
 		if ctrlC {
 			break
 		}
-		if err := p.Terminal.Write(frame.Data); err != nil {
+		if _, err := p.Terminal.Write(frame.Data); err != nil {
 			return err
 		}
 	}

@@ -1,6 +1,5 @@
 MODULE                                VERSION
 github.com/xakep666/asciinema-player  -
-github.com/creack/termios             v0.0.0-20160714173321-88d0029e36a1
 github.com/kr/pty                     v1.1.2
 github.com/mattn/go-runewidth         v0.0.2
 github.com/nsf/termbox-go             v0.0.0-20180613055208-5c94acc5e6eb
