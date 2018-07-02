@@ -1,10 +1,11 @@
-package terminal
+package mockterminal
 
 import (
 	"bytes"
 	"time"
 
 	"github.com/nsf/termbox-go"
+	"github.com/xakep666/asciinema-player/pkg/terminal"
 )
 
 // MockTerminal is a mock for Terminal interface with event queue and buffer. Used for testing purposes.
@@ -48,8 +49,13 @@ func (m *MockTerminal) Reset() error {
 	m.buf.Reset() // clear buffer data
 
 	// clear events queue
-	for len(m.eventQueue) > 0 {
-		<-m.eventQueue
+L:
+	for {
+		select {
+		case <-m.eventQueue:
+		default:
+			break L
+		}
 	}
 	return nil
 }
@@ -60,7 +66,7 @@ func (m *MockTerminal) TimeoutEvent(timeout time.Duration) (termbox.Event, error
 	case ev := <-m.eventQueue:
 		return ev, nil
 	case <-time.After(timeout):
-		return termbox.Event{}, ErrEventTimeout
+		return termbox.Event{}, terminal.ErrEventTimeout
 	}
 }
 
