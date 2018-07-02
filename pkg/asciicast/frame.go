@@ -28,6 +28,16 @@ type Frame struct {
 
 type jsonFrame [3]interface{}
 
+// FrameUnmarshalError returned if frame conversion to struct failed
+type FrameUnmarshalError struct {
+	Description string
+	Index       int
+}
+
+func (e *FrameUnmarshalError) Error() string {
+	return fmt.Sprintf("frame[%d]: %s", e.Index, e.Description)
+}
+
 // UnmarshalJSON implements json.Unmarshaler
 func (f *Frame) UnmarshalJSON(b []byte) error {
 	var rawFrame jsonFrame
@@ -39,7 +49,7 @@ func (f *Frame) UnmarshalJSON(b []byte) error {
 	case float64:
 		f.Time = t
 	default:
-		return fmt.Errorf("invalid frame[0] type %T", t)
+		return &FrameUnmarshalError{Description: fmt.Sprintf("invalid type %T", t), Index: 0}
 	}
 
 	switch frameTypeRaw := rawFrame[1].(type) {
@@ -48,17 +58,17 @@ func (f *Frame) UnmarshalJSON(b []byte) error {
 		case InputFrame, OutputFrame:
 			f.Type = FrameType(frameTypeRaw)
 		default:
-			return fmt.Errorf("invalid frame type %s", frameTypeRaw)
+			return &FrameUnmarshalError{Description: fmt.Sprintf("invalid value %v", frameTypeRaw), Index: 1}
 		}
 	default:
-		return fmt.Errorf("invalid frame[1] type %T", frameTypeRaw)
+		return &FrameUnmarshalError{Description: fmt.Sprintf("invalid type %T", frameTypeRaw), Index: 1}
 	}
 
 	switch text := rawFrame[2].(type) {
 	case string:
 		f.Data = []byte(text)
 	default:
-		return fmt.Errorf("invalid frame[2] type %T", text)
+		return &FrameUnmarshalError{Description: fmt.Sprintf("invalid type %T", text), Index: 2}
 	}
 
 	return nil
