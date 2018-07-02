@@ -35,20 +35,20 @@ For example you can play test session `./asciinema-player -f test.cast`
 
 ### Library
 ```go
-    parsed, err := parser.Parse(file)
-	if err != nil {
-	    return err
-	}
+parsed, err := parser.Parse(file)
+if err != nil {
+    return err
+}
 
-	tp, err := asciicast.NewTerminalPlayer()
-	if err != nil {
-        return err
-    }
+tp, err := asciicast.NewTerminalPlayer()
+if err != nil {
+    return err
+}
 
-	err = tp.Play(parsed, maxWait, speed)
-	if err != nil {
-        return err
-    }
+err = tp.Play(parsed, maxWait, speed)
+if err != nil {
+    return err
+}
 ```
 Library usage example is app actually.
 
