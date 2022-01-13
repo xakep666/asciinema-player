@@ -1,5 +1,5 @@
 # asciinema-player
-[![Build Status](https://travis-ci.org/xakep666/asciinema-player.svg?branch=master)](https://travis-ci.org/xakep666/asciinema-player)
+[![Build Status](https://github.com/xakep666/asciinema-player/actions/workflows/testing.yml/badge.svg)](https://github.com/xakep666/asciinema-player/actions/workflows/testing.yml)
 [![codecov](https://codecov.io/gh/xakep666/asciinema-player/branch/master/graph/badge.svg)](https://codecov.io/gh/xakep666/asciinema-player)
 [![Go Report Card](https://goreportcard.com/badge/github.com/xakep666/asciinema-player)](https://goreportcard.com/report/github.com/xakep666/asciinema-player)
 [![GoDoc](https://godoc.org/github.com/xakep666/asciinema-player/pkg/asciicast?status.svg)](https://godoc.org/github.com/xakep666/asciinema-player/pkg/asciicast)
