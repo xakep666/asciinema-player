@@ -104,7 +104,7 @@ func (p *Player) Start() (err error) {
 }
 
 func (p *Player) nextFrameDelay(frame Frame, prevFrameTime float64) time.Duration {
-	delay := time.Duration((frame.Time - prevFrameTime) * float64(time.Second))
+	delay := time.Duration((frame.Time - prevFrameTime) / p.options.speed * float64(time.Second))
 	if p.options.maxWait > 0 && delay > p.options.maxWait {
 		return p.options.maxWait
 	}
