@@ -1,10 +1,8 @@
-module github.com/xakep666/asciinema-player
+module github.com/xakep666/asciinema-player/v3
+
+go 1.17
 
 require (
-	github.com/kr/pty v1.1.2
-	github.com/mattn/go-runewidth v0.0.2
-	github.com/nsf/termbox-go v0.0.0-20180613055208-5c94acc5e6eb
-	golang.org/x/crypto v0.0.0-20180621125126-a49355c7e3f8
-	golang.org/x/sys v0.0.0-20180627142611-7138fd3d9dc8
-	golang.org/x/text v0.3.0
+	golang.org/x/sys v0.0.0-20210615035016-665e8c7367d1
+	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211
 )

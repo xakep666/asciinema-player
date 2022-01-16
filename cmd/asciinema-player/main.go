@@ -6,9 +6,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/xakep666/asciinema-player/pkg/asciicast"
-	"github.com/xakep666/asciinema-player/pkg/parser"
-	"github.com/xakep666/asciinema-player/pkg/terminal"
+	player "github.com/xakep666/asciinema-player/v3"
 )
 
 func errExit(err error) {
@@ -42,16 +40,18 @@ func main() {
 	errExit(err)
 	defer file.Close()
 
-	parsed, err := parser.Parse(file)
+	source, err := player.NewStreamFrameSource(file)
 	errExit(err)
 
-	term, err := terminal.NewPty()
+	term, err := player.NewOSTerminal()
 	errExit(err)
-	errExit(term.ToRaw())
-	defer term.Reset()
+	defer term.Close()
 
-	tp := &asciicast.TerminalPlayer{Terminal: term}
-
-	err = tp.Play(parsed, maxWait, speed)
+	p, err := player.NewPlayer(source, term, player.WithSpeed(speed), player.WithMaxWait(maxWait), player.WithIgnoreSizeCheck())
 	errExit(err)
+
+	err = p.Start()
+	if err != nil {
+		fmt.Println("Start failed:", err)
+	}
 }
