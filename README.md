@@ -1,24 +1,24 @@
 # asciinema-player
-[![Build Status](https://travis-ci.org/xakep666/asciinema-player.svg?branch=master)](https://travis-ci.org/xakep666/asciinema-player)
+[![Build Status](https://github.com/xakep666/asciinema-player/actions/workflows/testing.yml/badge.svg)](https://github.com/xakep666/asciinema-player/actions/workflows/testing.yml)
 [![codecov](https://codecov.io/gh/xakep666/asciinema-player/branch/master/graph/badge.svg)](https://codecov.io/gh/xakep666/asciinema-player)
 [![Go Report Card](https://goreportcard.com/badge/github.com/xakep666/asciinema-player)](https://goreportcard.com/report/github.com/xakep666/asciinema-player)
-[![GoDoc](https://godoc.org/github.com/xakep666/asciinema-player/pkg/asciicast?status.svg)](https://godoc.org/github.com/xakep666/asciinema-player/pkg/asciicast)
+[![GoDev](https://pkg.go.dev/badge/github.com/xakep666/asciinema-player/pkg/asciicast)](https://godoc.org/github.com/xakep666/asciinema-player/pkg/asciicast)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 asciinema-player is a library and cli-app to play terminal sessions recorded by asciinema (http://github.com/asciinema/asciinema)
 
 ## Prerequisites
-* Golang >= 1.10 or Vgo
+* Golang >= 1.17
 
 ## Installation
 Library:
 ```bash
-go get -v -u github.com/xakep666/pkg/asciicast
+go get -v -u github.com/xakep666/asciinema-player
 ```
 
 App:
 ```bash
-go get -v -u github.com/xakep666/cmd/asciinema-player
+go get -v -u github.com/xakep666/asciinema-player/cmd/asciinema-player
 ```
 
 ## Usage
@@ -39,30 +39,33 @@ For example you can play test session `./asciinema-player -f test.cast`
 
 ### Library
 ```go
-parsed, err := parser.Parse(file)
+frameSource, err := player.NewStreamFrameSource(reader)
 if err != nil {
     return err
 }
 
-term, err := terminal.NewPty()
+term, err := player.NewOSTerminal()
 if err != nil {
     return err
 }
 
-if err := term.ToRaw(); err != nil {
+defer term.Close()
+
+player, err := player.NewPlayer(frameSource, terminal)
+if err != nil {
     return err
 }
 
-defer term.Reset()
-
-tp := &asciicast.TerminalPlayer{Terminal: term}
-
-err = tp.Play(parsed, maxWait, speed)
+err = player.Play()
 if err != nil {
     return err
 }
 ```
-Library usage example is app actually.
+Library usage example is app, actually.
+
+## Examples
+[Renderer to GIF](./example/togif)
+[Web-based player for server-stored casts](./example/webplayer)
 
 ## License
 Asciinema-player project is licensed under the terms of the MIT license. Please see LICENSE in this repository for more details.

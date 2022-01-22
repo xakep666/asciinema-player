@@ -1,4 +1,4 @@
-{"version": 2, "width": 237, "height": 57, "timestamp": 1530264003, "env": {"SHELL": "/usr/bin/zsh", "TERM": "xterm-256color"}}
+{"version": 2, "width": 100, "height": 25, "timestamp": 1530264003, "env": {"SHELL": "/usr/bin/zsh", "TERM": "xterm-256color"}}
 [0.142074, "o", "\u001b[1m\u001b[7m%\u001b[27m\u001b[1m\u001b[0m                                                                                                                                                                                                                                            \r \r"]
 [0.143135, "o", "\u001b]2;xakep666@xakep666-INSPIRON-5756: ~/sources/go/src/github.com/xakep666/asciinema-player\u0007\u001b]1;..iinema-player\u0007"]
 [0.282059, "o", "\r\u001b[0m\u001b[27m\u001b[24m\u001b[J\u001b[39m\u001b[0m\u001b[49m\u001b[44m\u001b[30m ~/sources/go/src/github.com/xakep666/asciinema-player \u001b[43m\u001b[34m\u001b[30m  master \u001b[49m\u001b[33m\u001b[39m \u001b[K"]
