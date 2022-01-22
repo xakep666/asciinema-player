@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="xterm/xterm.css" />
+    <script src="xterm/xterm.js"></script>
+    <script src="xterm/xterm-addon-fit.js"></script>
+    <style>
+        html,body { height: 100%; margin: 0px; padding: 0px; }
+        #terminal { height: 90% }
+    </style>
+</head>
+<body>
+    Press "Space" for pause/play<br>
+    Press "Q" for stop<br>
+    <div id="terminal"></div>
+    <script type="application/ecmascript">
+        const term = new Terminal()
+        const fitAddon = new FitAddon.FitAddon()
+        term.loadAddon(fitAddon)
+        term.open(document.getElementById("terminal"))
+        fitAddon.fit()
+
+        const fileName = new URLSearchParams(window.location.search).get("file")
+        const ws = new WebSocket(`ws://${window.location.host}/play?file=${encodeURIComponent(fileName)}`)
+        ws.onopen = (ev) => {
+            document.onkeydown = (keyEv) => {
+                if (keyEv.key === "q") { ws.send(JSON.stringify({type: 3})) }
+                if (keyEv.code === "Space") { ws.send(JSON.stringify({type: 2})) }
+            }
+            ws.send(JSON.stringify({type: 0, dimensions: {width: term.cols, height: term.rows}}))
+        }
+        ws.onclose = (ev) => {
+            document.onkeydown = null
+        }
+        ws.onmessage = (msg) => {
+            const msgJSON = JSON.parse(msg.data)
+            if (msgJSON.type !== 1) {
+                console.log("Unexpected message", msgJSON)
+                return
+            }
+
+            term.write(msgJSON.data)
+        }
+        ws.onclose = (ev) => console.log("Websocket closed", ev)
+    </script>
+</body>
+</html>

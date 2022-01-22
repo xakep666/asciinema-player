@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+    <div id="files"></div>
+    <script type="application/ecmascript">
+       fetch("/files").
+        then(resp => resp.json()).
+        then(body => {
+           const elem = document.getElementById("files")
+           body.files.forEach(value => {
+               const link = document.createElement("a")
+               link.text = value
+               link.href = `${window.location}/player.html?file=${value}`
+               elem.appendChild(link)
+
+               elem.appendChild(document.createElement("br"))
+           })
+        }).
+        catch(err => alert(`fetch failed: ${err}`))
+    </script>
+</body>
+</html>

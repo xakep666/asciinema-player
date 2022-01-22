@@ -65,6 +65,7 @@ Library usage example is app, actually.
 
 ## Examples
 [Renderer to GIF](./example/togif)
+[Web-based player for server-stored casts](./example/webplayer)
 
 ## License
 Asciinema-player project is licensed under the terms of the MIT license. Please see LICENSE in this repository for more details.
