@@ -2,7 +2,7 @@
 [![Build Status](https://github.com/xakep666/asciinema-player/actions/workflows/testing.yml/badge.svg)](https://github.com/xakep666/asciinema-player/actions/workflows/testing.yml)
 [![codecov](https://codecov.io/gh/xakep666/asciinema-player/branch/master/graph/badge.svg)](https://codecov.io/gh/xakep666/asciinema-player)
 [![Go Report Card](https://goreportcard.com/badge/github.com/xakep666/asciinema-player)](https://goreportcard.com/report/github.com/xakep666/asciinema-player)
-[![GoDev](https://pkg.go.dev/badge/github.com/xakep666/asciinema-player/pkg/asciicast)](https://godoc.org/github.com/xakep666/asciinema-player/pkg/asciicast)
+[![Go Reference](https://pkg.go.dev/badge/github.com/xakep666/asciinema-player/v3.svg)](https://pkg.go.dev/github.com/xakep666/asciinema-player/v3)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 asciinema-player is a library and cli-app to play terminal sessions recorded by asciinema (http://github.com/asciinema/asciinema)
